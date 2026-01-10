@@ -1,4 +1,5 @@
 *.swp
+secrets.toml
 
 # Python-generated files
 __pycache__/
@@ -11,4 +12,7 @@ wheels/
 # Virtual environments
 .venv
 
-secrets.toml
+# Data files
+*.csv
+*.parquet
+*.json

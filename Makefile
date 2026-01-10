@@ -1,6 +1,6 @@
 .PHONY: \
-	format \
 	help \
+	init-db \
 	run
 
 ## Show this help.
@@ -14,22 +14,13 @@ help:
 run:
 	uv run streamlit run app.py
 
-## Runs the pre-commit tasks against all files, automatically fixing files when it can
-format:
-	${MAKE} -C ../.. format
-
-## List all available versions of medely-stramlit built in production
-list-versions:
-	${MAKE} -C ../.. list-versions
+#################################################################################
+# Concrete targets
+#################################################################################
 
 uv.lock:
 	@uv lock
 
-requirements.txt: uv.lock
-	@uv export \
-		--format requirements.txt \
-		--frozen \
-		--no-dev \
-		--no-hashes \
-		--output-file requirements.txt \
-		--quiet
+data/%.parquet: scripts/init_db.py
+	rm data/*.parquet || true
+	uv run scripts/init_db.py
