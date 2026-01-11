@@ -4,6 +4,7 @@ import polars as pl
 import pendulum
 from src import strings
 from src.users import (
+    get_viewables_progress,
     get_user_details,
     get_active_user_progress,
     get_active_user_details,
@@ -71,6 +72,40 @@ def init():
         type="secondary",
         width="stretch",
     )
+
+
+def aggregate_progress():
+    lang = get_active_lang()
+
+    st.header(strings.leaderboard[lang])
+
+    progress_df = get_viewables_progress(get_active_user_details())
+
+    progress_df.group_by("name").agg(
+        pl.col("completed").sum().alias("completed_count"),
+        pl.col("plan_id").unique().count().alias("total_count"),
+    ).select(
+        "name",
+        pl.format("{}/{}", pl.col("completed_count"), pl.col("total_count")).alias(
+            "progress_text"
+        ),
+        (pl.col("completed_count") / pl.col("total_count")).alias("progress"),
+    ).sort(["progress", "name"], descending=[True, False]).pipe(
+        st.dataframe,
+        column_config={
+            "name": st.column_config.TextColumn(label=strings.name[lang]),
+            "progress_text": st.column_config.TextColumn(
+                label=strings.days[lang],
+                width="small",
+            ),
+            "progress": st.column_config.ProgressColumn(
+                label="Progress",
+                format="percent",
+                width="large",
+            ),
+        },
+    )
+    st.caption(strings.update_delay_notice[lang])
 
 
 def my_progress():

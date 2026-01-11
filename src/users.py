@@ -4,6 +4,7 @@ from src import data
 import streamlit as st
 import polars as pl
 from src.models import Role, UserDetails, Group, Language, Keys
+from src import strings
 
 
 @st.cache_data(ttl=3600)
@@ -71,4 +72,37 @@ def get_active_user_progress() -> pl.DataFrame:
         pl.col("date_kr"),
         pl.col(plan_col).alias("plan"),
         pl.col("completed").fill_null(False),
+    )
+
+
+def get_viewables_progress(user_details: UserDetails) -> pl.DataFrame:
+    """Get progress for viewable groups"""
+    viewable_names = (
+        data.load_members_data()
+        .filter(pl.col("group").is_in(user_details.viewables))
+        .select("name")
+        .unique()
+    )
+
+    plan_df = data.load_plan_data()
+
+    return pl.concat(
+        [
+            plan_df.join(
+                data.load_progress_data(username=name),
+                left_on="id",
+                right_on="plan_id",
+                how="left",
+            ).select(
+                pl.col("id").alias("plan_id"),
+                pl.col("completed").fill_null(False),
+                pl.lit(
+                    strings.display_name(
+                        name=name,
+                        lang=user_details.language,
+                    )
+                ).alias("name"),
+            )
+            for name in viewable_names["name"]
+        ]
     )
