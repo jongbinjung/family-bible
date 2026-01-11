@@ -17,9 +17,9 @@ if not st.user.is_logged_in:
 else:
     sections.init()
 
-    sections.aggregate_progress()
-
     sections.my_progress()
+
+    sections.aggregate_progress()
 
     if st.session_state[Keys.CURRENT_USER_DETAILS].role == Role.ADMIN:
         with st.expander("Debug Info", expanded=False):

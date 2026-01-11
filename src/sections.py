@@ -93,7 +93,10 @@ def aggregate_progress():
     ).sort(["progress", "name"], descending=[True, False]).pipe(
         st.dataframe,
         column_config={
-            "name": st.column_config.TextColumn(label=strings.name[lang]),
+            "name": st.column_config.TextColumn(
+                label=strings.name[lang],
+                width="small",
+            ),
             "progress_text": st.column_config.TextColumn(
                 label=strings.days[lang],
                 width="small",
@@ -101,7 +104,6 @@ def aggregate_progress():
             "progress": st.column_config.ProgressColumn(
                 label="Progress",
                 format="percent",
-                width="large",
             ),
         },
     )
