@@ -1,7 +1,7 @@
 import streamlit as st
 import polars as pl
+from src.processors import filter_progress
 
-import pendulum
 from src import strings
 from src.users import (
     get_viewables_progress,
@@ -118,12 +118,7 @@ def my_progress():
     progress_df = get_active_user_progress()
 
     edited_progress_df = st.data_editor(
-        progress_df.filter(
-            pl.col("date_us").is_between(
-                pendulum.now().subtract(weeks=2).date(),
-                pendulum.now().add(weeks=2).date(),
-            )
-        ),
+        filter_progress(progress_df),
         column_config={
             "plan_id": None,
             "date_us": st.column_config.DateColumn(

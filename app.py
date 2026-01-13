@@ -1,4 +1,5 @@
 import streamlit as st
+from src import strings
 import polars as pl
 from src.data import load_viewables_data, load_members_data
 from src import sections
@@ -10,6 +11,11 @@ st.session_state[Keys.LANGUAGE] = configs.DEFAULT_LANGUAGE
 
 if st.context.locale.split("-")[0].lower() == "en":
     st.session_state[Keys.LANGUAGE] = Language.EN
+
+title = strings.title[st.session_state[Keys.LANGUAGE]]
+
+st.set_page_config(page_title=title)
+st.title(title)
 
 
 if not st.user.is_logged_in:

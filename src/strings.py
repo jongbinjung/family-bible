@@ -34,16 +34,19 @@ name = {
     Language.KO: "이름",
 }
 
-
 plan = {
     Language.EN: "Plan",
     Language.KO: "진도",
 }
 
-
 read = {
     Language.EN: "Read",
     Language.KO: "읽음",
+}
+
+title = {
+    Language.EN: "Biblical wine",
+    Language.KO: "가족 성경통독",
 }
 
 update_delay_notice = {
