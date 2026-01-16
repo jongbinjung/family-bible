@@ -100,7 +100,7 @@ def load_progress_data(username: str) -> pl.DataFrame:
 
 
 def update_progress_data(username: str, df: pl.DataFrame):
-    """Overwrite existing progress data for a given user
+    """Overwrite existing progress data for a given user and bust existing cache
 
     Args:
         username (str): username of the user
