@@ -9,7 +9,7 @@ from src import configs
 
 st.session_state[Keys.LANGUAGE] = configs.DEFAULT_LANGUAGE
 
-if st.context.locale.split("-")[0].lower() == "en":
+if st.context.locale is not None and st.context.locale.split("-")[0].lower() == "en":
     st.session_state[Keys.LANGUAGE] = Language.EN
 
 title = strings.title[st.session_state[Keys.LANGUAGE]]
