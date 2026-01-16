@@ -41,8 +41,6 @@ def build_new_progress_df(progress_df: pl.DataFrame) -> pl.DataFrame:
         .sort("plan_id")
     )
 
-    st.write(updated_user_progress_df)
-
     if configs.DEBUG:
         st.write("Updated value:", updated_user_progress_df)
 
