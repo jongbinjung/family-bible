@@ -1,6 +1,6 @@
 import streamlit as st
 import polars as pl
-from src.processors import filter_progress
+from src.processors import filter_progress, build_new_progress_df
 
 from src import strings
 from src.users import (
@@ -11,7 +11,6 @@ from src.users import (
     get_active_lang,
 )
 from src import data
-from src import configs
 from src.models import Keys, Role
 
 
@@ -117,7 +116,7 @@ def my_progress():
     st.write(f"`{get_active_user_details().email}`")
     progress_df = get_active_user_progress()
 
-    edited_progress_df = st.data_editor(
+    st.data_editor(
         filter_progress(progress_df),
         column_config={
             "plan_id": None,
@@ -138,32 +137,6 @@ def my_progress():
         key=Keys.ACTIVE_USER_PROGRESS,
         num_rows="fixed",
         row_height=42,
+        on_change=build_new_progress_df,
+        kwargs={"progress_df": progress_df},
     )
-
-    updated_user_progress_df = (
-        pl.concat(
-            [
-                progress_df.join(edited_progress_df, how="anti", on="plan_id").select(
-                    "plan_id", "completed"
-                ),
-                edited_progress_df.filter(pl.col("completed")).select(
-                    "plan_id", "completed"
-                ),
-            ]
-        )
-        .filter(pl.col("completed"))
-        .sort("plan_id")
-    )
-
-    if configs.DEBUG:
-        st.write("Updated value:", updated_user_progress_df)
-
-    data.update_progress_data(
-        get_active_user_details().username,
-        updated_user_progress_df,
-    )
-
-    if configs.DEBUG:
-        st.write(
-            "Live value:", data.uncached_progress(get_active_user_details().username)
-        )

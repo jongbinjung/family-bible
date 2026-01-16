@@ -57,7 +57,7 @@ def get_active_user_progress() -> pl.DataFrame:
     # Read from data sources
     active_user = get_active_user_details()
     plan_df = data.load_plan_data()
-    progress_df = data.load_progress_data(username=active_user.username)
+    progress_df = data.uncached_progress(username=active_user.username)
 
     plan_col = f"plan_{active_user.language.value.lower()}"
 
