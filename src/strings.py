@@ -44,6 +44,11 @@ read = {
     Language.KO: "읽음",
 }
 
+show_completed = {
+    Language.EN: "Show past read plans",
+    Language.KO: "읽은 지난 진도 보기",
+}
+
 title = {
     Language.EN: "Biblical wine",
     Language.KO: "가족 성경통독",

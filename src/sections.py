@@ -113,7 +113,13 @@ def my_progress():
     lang = get_active_lang()
     st.header(strings.my_progress[lang])
 
-    st.write(f"`{get_active_user_details().email}`")
+    with st.container(horizontal=True):
+        st.checkbox(
+            strings.show_completed[lang],
+            key=Keys.SHOW_COMPLETED,
+        )
+        st.write(f"`{get_active_user_details().email}`")
+
     progress_df = get_active_user_progress()
 
     st.data_editor(

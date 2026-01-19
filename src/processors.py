@@ -4,14 +4,18 @@ import streamlit as st
 import pendulum
 from src import configs, data
 from src.users import get_active_user_details
+from src.configs import MAX_FUTURE_WEEKS
 
 
 def filter_progress(df: pl.DataFrame) -> pl.DataFrame:
     """Filter progress data to just the entries to show in the user's progress."""
+    past_days = 1
+    if st.session_state.get(Keys.SHOW_COMPLETED, False):
+        past_days = 14
     return df.filter(
-        (pl.col("date_us") >= pendulum.now().subtract(days=1).date())
+        (pl.col("date_us") >= pendulum.now().subtract(days=past_days).date())
         | ~pl.col("completed")
-    ).filter(pl.col("date_us") <= pendulum.now().add(weeks=1).date())
+    ).filter(pl.col("date_us") <= pendulum.now().add(weeks=MAX_FUTURE_WEEKS).date())
 
 
 def build_new_progress_df(progress_df: pl.DataFrame) -> pl.DataFrame:

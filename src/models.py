@@ -12,6 +12,7 @@ class Keys(StrEnum):
     IMPERSONATED_USER_DETAILS = auto()
     IMPERSONATING_USER_EMAIL = auto()
     LANGUAGE = auto()
+    SHOW_COMPLETED = auto()
 
 
 class Group(StrEnum):
