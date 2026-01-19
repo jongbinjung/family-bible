@@ -74,14 +74,15 @@ def compute_progress_metrics(df: pl.DataFrame) -> UserProgressMetrics:
         UserProgressMetrics object
 
     """
+    us_today = pendulum.now(tz="America/Los_Angeles").date()
     metrics = df.select(
         pl.col("plan_id")
-        .filter(pl.col("date_us") <= pendulum.now().date())
+        .filter(pl.col("date_us") <= us_today)
         .unique()
         .count()
         .alias("ytd_planned"),
         pl.col("completed")
-        .filter(pl.col("date_us") <= pendulum.now().date())
+        .filter(pl.col("date_us") <= us_today)
         .sum()
         .alias("ytd_completed"),
         pl.col("completed").sum().alias("total_completed"),
