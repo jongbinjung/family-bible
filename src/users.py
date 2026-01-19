@@ -53,7 +53,17 @@ def get_active_lang() -> Language:
 
 
 def get_active_user_progress() -> pl.DataFrame:
-    """Get progress for active user"""
+    """Get progress for active user
+
+    Returns:
+        DataFrame with columns:
+            - plan_id: ID of the plan item
+            - date_us: US date of the plan item
+            - date_kr: KR date of the plan item
+            - plan: plan text in the user's language
+            - completed: whether the user has completed this plan item
+
+    """
     # Read from data sources
     active_user = get_active_user_details()
     plan_df = data.load_plan_data()

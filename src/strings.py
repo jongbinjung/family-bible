@@ -44,9 +44,24 @@ read = {
     Language.KO: "읽음",
 }
 
+show_completed = {
+    Language.EN: "Show past read plans",
+    Language.KO: "읽은 지난 진도 보기",
+}
+
 title = {
     Language.EN: "Biblical wine",
     Language.KO: "가족 성경통독",
+}
+
+total = {
+    Language.EN: "total {:.2%}",
+    Language.KO: "전체 {:.2%}",
+}
+
+up_to_date = {
+    Language.EN: "Up to date",
+    Language.KO: "진도 완료",
 }
 
 update_delay_notice = {
@@ -54,9 +69,19 @@ update_delay_notice = {
     Language.KO: "참고: 진도 업데이트가 반영되기까지 최대 1분이 걸릴 수 있습니다.",
 }
 
+unread = {
+    Language.EN: "unread",
+    Language.KO: "읽지 않음",
+}
+
 welcome_pattern = {
     Language.EN: "Welcome, {}!",
     Language.KO: "환영합니다, {}님!",
+}
+
+ytd = {
+    Language.EN: "{:.0%} YTD",
+    Language.KO: "오늘까지 {:.0%}",
 }
 
 

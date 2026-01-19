@@ -1,6 +1,10 @@
 import streamlit as st
 import polars as pl
-from src.processors import filter_progress, build_new_progress_df
+from src.processors import (
+    filter_progress,
+    build_new_progress_df,
+    compute_progress_metrics,
+)
 
 from src import strings
 from src.users import (
@@ -113,8 +117,32 @@ def my_progress():
     lang = get_active_lang()
     st.header(strings.my_progress[lang])
 
-    st.write(f"`{get_active_user_details().email}`")
     progress_df = get_active_user_progress()
+
+    metrics = compute_progress_metrics(progress_df)
+    if metrics.up_to_date:
+        delta = strings.up_to_date[lang]
+    else:
+        delta = f"- {metrics.past_unread} {strings.unread[lang]}"
+    ytd_value = strings.ytd[lang].format(metrics.ytd_completion_rate)
+    total_value = strings.total[lang].format(metrics.total_completion_rate)
+    st.metric(
+        label="Metric",
+        label_visibility="collapsed",
+        value=f"{ytd_value} ({total_value})",
+        delta=delta,
+        delta_arrow="off",
+        border=True,
+        chart_data=progress_df["completed"].cast(int).to_list(),
+        chart_type="bar",
+    )
+
+    with st.container(horizontal=True):
+        st.checkbox(
+            strings.show_completed[lang],
+            key=Keys.SHOW_COMPLETED,
+        )
+        st.write(f"`{get_active_user_details().email}`")
 
     st.data_editor(
         filter_progress(progress_df),
