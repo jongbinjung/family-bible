@@ -1,7 +1,7 @@
 """Shared data models"""
 
 from enum import StrEnum, auto
-from pydantic import BaseModel
+from pydantic import BaseModel, computed_field
 
 
 class Keys(StrEnum):
@@ -49,3 +49,40 @@ class UserDetails(BaseModel):
     group: Group
     language: Language
     viewables: list[Group]
+
+
+class UserProgressMetrics(BaseModel):
+    """Progress metrics for a single user."""
+
+    ytd_completed: int
+    ytd_planned: int
+    total_completed: int
+    total_planned: int
+
+    @computed_field
+    @property
+    def ytd_completion_rate(self) -> float:
+        """Year-to-date completion percentage."""
+        if self.ytd_planned == 0:
+            return 0.0
+        return self.ytd_completed / self.ytd_planned
+
+    @computed_field
+    @property
+    def total_completion_rate(self) -> float:
+        """Total completion percentage."""
+        if self.total_planned == 0:
+            return 0.0
+        return self.total_completed / self.total_planned
+
+    @computed_field
+    @property
+    def past_unread(self) -> int:
+        """Past plans that are unread"""
+        return max(0, self.ytd_planned - self.ytd_completed)
+
+    @computed_field
+    @property
+    def up_to_date(self) -> bool:
+        """Whether progress is up-to-date"""
+        return self.past_unread == 0

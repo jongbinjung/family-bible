@@ -1,5 +1,5 @@
 import polars as pl
-from src.models import Keys
+from src.models import Keys, UserProgressMetrics
 import streamlit as st
 import pendulum
 from src import configs, data
@@ -57,3 +57,35 @@ def build_new_progress_df(progress_df: pl.DataFrame) -> pl.DataFrame:
         st.write(
             "Live value:", data.uncached_progress(get_active_user_details().username)
         )
+
+
+def compute_progress_metrics(df: pl.DataFrame) -> UserProgressMetrics:
+    """Compute progress metrics from progress DataFrame.
+
+    Args:
+        df: DataFrame with columns:
+            - plan_id: ID of the plan item
+            - date_us: US date of the plan item
+            - date_kr: KR date of the plan item
+            - plan: plan text in the user's language
+            - completed: whether the user has completed this plan item
+
+    Returns:
+        UserProgressMetrics object
+
+    """
+    metrics = df.select(
+        pl.col("plan_id")
+        .filter(pl.col("date_us") <= pendulum.now().date())
+        .unique()
+        .count()
+        .alias("ytd_planned"),
+        pl.col("completed")
+        .filter(pl.col("date_us") <= pendulum.now().date())
+        .sum()
+        .alias("ytd_completed"),
+        pl.col("completed").sum().alias("total_completed"),
+        pl.col("plan_id").unique().count().alias("total_planned"),
+    ).to_dicts()[0]
+
+    return UserProgressMetrics(**metrics)
