@@ -59,6 +59,37 @@ def build_new_progress_df(progress_df: pl.DataFrame) -> pl.DataFrame:
         )
 
 
+def catch_up_progress(progress_df: pl.DataFrame) -> pl.DataFrame:
+    """Catch up the plan DataFrame"""
+
+    today = pendulum.now().subtract(days=1).date()
+
+    updated_user_progress_df = (
+        progress_df.select(
+            pl.col("plan_id"),
+            pl.when(pl.col("date_us") <= today)
+            .then(True)
+            .otherwise(pl.col("completed"))
+            .alias("completed"),
+        )
+        .filter(pl.col("completed"))
+        .sort("plan_id")
+    )
+
+    if configs.DEBUG:
+        st.write("Updated value:", updated_user_progress_df)
+
+    data.update_progress_data(
+        get_active_user_details().username,
+        updated_user_progress_df,
+    )
+
+    if configs.DEBUG:
+        st.write(
+            "Live value:", data.uncached_progress(get_active_user_details().username)
+        )
+
+
 def compute_progress_metrics(df: pl.DataFrame) -> UserProgressMetrics:
     """Compute progress metrics from progress DataFrame.
 

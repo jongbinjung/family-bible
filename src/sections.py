@@ -2,6 +2,7 @@ import streamlit as st
 import polars as pl
 from src.processors import (
     filter_progress,
+    catch_up_progress,
     build_new_progress_df,
     compute_progress_metrics,
 )
@@ -15,6 +16,7 @@ from src.users import (
     get_active_lang,
 )
 from src import data
+from src.configs import CATCH_UP_THRESHOLD
 from src.models import Keys, Role
 
 
@@ -136,6 +138,21 @@ def my_progress():
         chart_data=progress_df["completed"].cast(int).to_list(),
         chart_type="bar",
     )
+
+    if metrics.past_unread > CATCH_UP_THRESHOLD:
+        st.warning(
+            strings.catch_up_callout[lang].format(
+                past_unread=metrics.past_unread,
+                catch_up=strings.catch_up[lang],
+            )
+        )
+        st.button(
+            strings.catch_up[lang],
+            width="stretch",
+            on_click=catch_up_progress,
+            kwargs={"progress_df": progress_df},
+            type="primary",
+        )
 
     with st.container(horizontal=True):
         st.checkbox(
