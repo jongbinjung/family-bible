@@ -2,6 +2,16 @@
 
 from src.models import Language
 
+catch_up = {
+    Language.EN: "Catch up",
+    Language.KO: "따라잡기",
+}
+
+catch_up_callout = {
+    Language.EN: "You have {past_unread} past unread plans. Hit {catch_up} to mark them all as read!",
+    Language.KO: "진도가 {past_unread} 개 밀렸네요. 모두 읽음으로 표시하려면 {catch_up}를 누르세요!",
+}
+
 days = {
     Language.EN: "Days",
     Language.KO: "일",
